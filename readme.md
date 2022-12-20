@@ -1,40 +1,21 @@
+# Digital Signage for Raspberry Pi
+Basic solution for using feh within raspbian in order to start slideshows (digital signage).
+This is meant to be a standalone solution, not requiring network capabilities.
 
-Feh signage
+The repository contains the required files in their directory structure /opt/signage, /etc/lightdm and /etc/systemd/system.
+You can pull the repository locally and move the files to the appropriate folders.
 
-Installation
+lightdm.conf:
+- lightdm.conf: requires one addition line below [Seat:*]: ```xserver-command=X -s 0 -dpms``` 
+reboot to apply
 
-Update /etc/lightdm/lightm.conf
-add line below [Seat:*]
+Starting the service:
+```systemctl start signage.service```
 
-xserver-command=X -s 0 -dpms
+Enabling the service:
+```systemctl enable signage.service```
 
-Create service /etc/systemd/system/signage.service with the following content
+Script to be located in /opt/signage -> do not forget to add execution permissions
+```chmod +x /opt/signage/start-slideshow.sh```
 
-[Unit]
-Description=Signage Service
-StartLimitIntervalSec=0
-
-[Service]
-Type=simple
-Restart=on-failure
-RestartSec=1
-User=pi
-ExecStart=/opt/signage/start-slideshow.sh
-
-[Install]
-WantedBy=multi-user.target
-
-Create start script in /opt/signage
-
-#!/bin/bash
-DISPLAY=:0.0 XAUTHORITY=/home/pi/.Xauthority /usr/bin/feh -q -p -Z -F -R 60 -Y -D 10.0 /opt/signage/slides
-
-Create directory /opt/signage/slides and place images
-
-Start Service
-
-systemctl start signage.service
-
-Enable Service
-
-systemctl enable signage.service
+Slides to be uploaded in /opt/signage/slides
